@@ -1,12 +1,10 @@
 package com.banking.backend.service.impl;
 
-import com.banking.backend.model.dto.LoginRequest;
-import com.banking.backend.model.dto.RegisterRequest;
 import com.banking.backend.model.entity.User;
 import com.banking.backend.repository.UserRepository;
-import com.banking.backend.service.UserService;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import com.banking.backend.service.UserService;
 
 import java.util.regex.Pattern;
 

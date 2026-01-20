@@ -3,9 +3,9 @@ package com.banking.backend.controller;
 import com.banking.backend.model.dto.LoginRequest;
 import com.banking.backend.model.dto.RegisterRequest;
 import com.banking.backend.model.entity.User;
-import com.banking.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.banking.backend.service.UserService;
 
 @RestController
 @RequestMapping("/api/auth")
