@@ -125,6 +125,53 @@ import jakarta.persistence.*;
 //}
 
 
+//@Entity
+//@Table(name = "accounts")
+//public class Account {
+//
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "account_number")
+//    private Long accountNumber;
+//
+//    @Column(nullable = false)
+//    private Double balance;
+//
+//    @Column(nullable = false)
+//    private String fullName;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
+//    // ===== getters & setters =====
+//
+//    public Long getAccountNumber() {
+//        return accountNumber;
+//    }
+//
+//  public void setAccountNumber(Long accountNumber) {
+//        this.accountNumber = accountNumber;
+//    }
+//
+//    public Double getBalance() {
+//        return balance;
+//    }
+//
+//    public void setBalance(Double balance) {
+//        this.balance = balance;
+//    }
+//
+//    public User getUser() {
+//        return user;
+//    }
+//
+//    public void setUser(User user) {
+//        this.user = user;
+//    }
+//
+//}
+//
+
 @Entity
 @Table(name = "accounts")
 public class Account {
@@ -140,20 +187,19 @@ public class Account {
     @Column(nullable = false)
     private String fullName;
 
-
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    // ===== getters & setters =====
+    // ===== GETTERS & SETTERS =====
 
     public Long getAccountNumber() {
         return accountNumber;
     }
 
-//    public void setAccountNumber(Long accountNumber) {
-//        this.accountNumber = accountNumber;
-//    }
+    public void setAccountNumber(Long accountNumber) {
+        this.accountNumber = accountNumber;
+    }
 
     public Double getBalance() {
         return balance;
@@ -163,6 +209,14 @@ public class Account {
         this.balance = balance;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     public User getUser() {
         return user;
     }
@@ -170,6 +224,4 @@ public class Account {
     public void setUser(User user) {
         this.user = user;
     }
-
 }
-
