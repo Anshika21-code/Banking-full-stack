@@ -31,4 +31,8 @@ public interface AccountService {
     Account createAccount(Long userId);
 
     Account getAccount(Long accountNumber);
+
+    Account deposit(Long accountNumber, Double amount);
+
+    Account withdraw(Long accountNumber, Double amount);
 }

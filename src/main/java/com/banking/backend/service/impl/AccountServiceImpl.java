@@ -2,28 +2,39 @@ package com.banking.backend.service.impl;
 
 import com.banking.backend.model.entity.Account;
 
+import com.banking.backend.model.entity.Transaction;
+import com.banking.backend.model.entity.TransactionType;
 import com.banking.backend.model.entity.User;
 import com.banking.backend.repository.AccountRepository;
 
+import com.banking.backend.repository.TransactionRepository;
 import com.banking.backend.repository.UserRepository;
 import com.banking.backend.service.AccountService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+
+import java.time.LocalDateTime;
 
 @Service
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
+
 
     //  STEP 5 IS HERE (CONSTRUCTOR INJECTION)
     public AccountServiceImpl(
             AccountRepository accountRepository,
-            UserRepository userRepository) {
-
+            UserRepository userRepository,
+            TransactionRepository transactionRepository
+    ) {
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
+        this.transactionRepository = transactionRepository;
     }
+
 
 
     //  STEP 4 IS THIS METHOD
@@ -43,6 +54,56 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.save(account);
     }
 
+    public Account deposit(Long accountNumber, Double amount) {
+
+        if (amount <= 0) {
+            throw new RuntimeException("Deposit amount must be positive");
+        }
+
+        Account account = accountRepository.findById(accountNumber)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        account.setBalance(account.getBalance() + amount);
+
+//        Transaction tx = new Transaction();
+//        tx.setAccount(account);
+//        tx.setAmount(amount);
+//        tx.setType(TransactionType.DEPOSIT);
+//        tx.setTimestamp(LocalDateTime.now());
+//
+//        transactionRepository.save(tx);
+
+        return accountRepository.save(account);
+    }
+
+
+    public Account withdraw(Long accountNumber, Double amount) {
+
+        if (amount <= 0) {
+            throw new RuntimeException("Withdraw amount must be positive");
+        }
+
+        Account account = accountRepository.findById(accountNumber)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        if (account.getBalance() < amount) {
+            throw new RuntimeException("Insufficient balance");
+        }
+
+        account.setBalance(account.getBalance() - amount);
+
+        Transaction tx = new Transaction();
+        tx.setAccount(account);
+        tx.setAmount(amount);
+        tx.setType(TransactionType.WITHDRAW);
+        tx.setTimestamp(LocalDateTime.now());
+
+        transactionRepository.save(tx);
+
+        return accountRepository.save(account);
+    }
+
+
 
     @Override
     public Account getAccount(Long accountNumber) {
@@ -50,3 +111,5 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new RuntimeException("Account not found"));
     }
 }
+
+
