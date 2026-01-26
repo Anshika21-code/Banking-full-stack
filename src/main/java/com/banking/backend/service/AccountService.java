@@ -1,30 +1,10 @@
-//package com.banking.backend.service;
-//
-//import com.banking.backend.model.entity.Account;
-//import com.banking.backend.repository.AccountRepository;
-//import org.springframework.stereotype.Service;
-//
-//@Service
-//public class AccountService {
-//
-//    private final AccountRepository accountRepository;
-//
-//    public AccountService(AccountRepository accountRepository) {
-//        this.accountRepository = accountRepository;
-//    }
-//
-//    public Account createAccount(Account account) {
-//        return accountRepository.save(account);
-//    }
-//
-//    public Account getByAccountNumber(Long accountNumber) {
-//        return accountRepository.findByAccountNumber(accountNumber)
-//                .orElse(null);
-//    }
-//}
 package com.banking.backend.service;
 
 import com.banking.backend.model.entity.Account;
+import com.banking.backend.model.entity.Transaction;
+
+import java.util.List;
+
 
 public interface AccountService {
 
@@ -35,4 +15,6 @@ public interface AccountService {
     Account deposit(Long accountNumber, Double amount);
 
     Account withdraw(Long accountNumber, Double amount);
+
+    List<Transaction> getTransactions(Long accountNumber);
 }

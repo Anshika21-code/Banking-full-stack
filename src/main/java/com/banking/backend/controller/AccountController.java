@@ -1,8 +1,13 @@
 package com.banking.backend.controller;
 
 import com.banking.backend.model.entity.Account;
+import com.banking.backend.model.entity.Transaction;
 import com.banking.backend.service.AccountService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+
 @RestController
 @RequestMapping("/api/accounts")
 public class AccountController {
@@ -42,5 +47,14 @@ public class AccountController {
 
         return accountService.withdraw(accountNumber, amount);
     }
+
+    @GetMapping("/{accountNumber}/transactions")
+    public List<Transaction> getTransactions(
+            @PathVariable Long accountNumber) {
+
+        return accountService.getTransactions(accountNumber);
+    }
+
+
 }
 

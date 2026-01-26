@@ -19,7 +19,7 @@ public class Transaction {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TransactionType type;
+    private TransactionType type;   // DEPOSIT, WITHDRAW
 
     @Column(nullable = false)
     private double amount;
