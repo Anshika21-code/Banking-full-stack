@@ -13,6 +13,13 @@ import com.banking.backend.service.AccountService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+// exception handler
+
+import com.banking.backend.exception.ResourceNotFoundException;
+import com.banking.backend.exception.BadRequestException;
+import com.banking.backend.exception.ConflictException;
+
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -117,7 +124,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account createAccount(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found" + userId));
 
         Account account = new Account();
         account.setBalance(0.0);
@@ -152,11 +159,18 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account withdraw(Long accountNumber, Double amount) {
+        // Account not found 404 error
         Account account = accountRepository.findById(accountNumber)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found" + accountNumber));
 
+        // Insufficient balance error 409
         if (account.getBalance() < amount) {
-            throw new RuntimeException("Insufficient balance");
+            throw new ConflictException("Insufficient balance");
+        }
+
+        //Invalid amount error 400
+        if (amount <= 0) {
+            throw new BadRequestException("Insufficient amount");
         }
 
         account.setBalance(account.getBalance() - amount);
@@ -177,4 +191,57 @@ public class AccountServiceImpl implements AccountService {
         return transactionRepository
                 .findByAccount_AccountNumber(accountNumber);
     }
+
+    @Override
+    @Transactional
+    public void transferMoney(Long fromAccountNumber, Long toAccountNumber, Double amount) {
+
+        if (amount <= 0) {
+            throw new BadRequestException("Transfer amount must be greater than zero");
+        }
+
+        if (fromAccountNumber.equals(toAccountNumber)) {
+            throw new BadRequestException("Cannot transfer to same account");
+        }
+
+        Account fromAccount = accountRepository.findById(fromAccountNumber)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("From account not found")
+                );
+
+        Account toAccount = accountRepository.findById(toAccountNumber)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("To account not found")
+                );
+
+        if (fromAccount.getBalance() < amount) {
+            throw new ConflictException("Insufficient balance");
+        }
+
+        // 1 debit
+        fromAccount.setBalance(fromAccount.getBalance() - amount);
+
+        Transaction debitTx = new Transaction();
+        debitTx.setAccount(fromAccount);
+        debitTx.setAmount(amount);
+        debitTx.setType(TransactionType.TRANSFER_DEBIT);
+        debitTx.setTimestamp(LocalDateTime.now());
+
+        // 2 credit
+        toAccount.setBalance(toAccount.getBalance() + amount);
+
+        Transaction creditTx = new Transaction();
+        creditTx.setAccount(toAccount);
+        creditTx.setAmount(amount);
+        creditTx.setType(TransactionType.TRANSFER_CREDIT);
+        creditTx.setTimestamp(LocalDateTime.now());
+
+        // 3 save everything
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+
+        transactionRepository.save(debitTx);
+        transactionRepository.save(creditTx);
+    }
+
 }

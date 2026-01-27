@@ -17,4 +17,6 @@ public interface AccountService {
     Account withdraw(Long accountNumber, Double amount);
 
     List<Transaction> getTransactions(Long accountNumber);
+
+    void transferMoney(Long fromAccount, Long toAccountNumber, Double amount);
 }

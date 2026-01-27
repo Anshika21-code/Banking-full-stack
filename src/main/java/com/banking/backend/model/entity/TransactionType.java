@@ -2,5 +2,7 @@ package com.banking.backend.model.entity;
 
 public enum TransactionType {
     DEPOSIT,
-    WITHDRAW
+    WITHDRAW,
+    TRANSFER_DEBIT,
+    TRANSFER_CREDIT
 }

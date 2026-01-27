@@ -1,11 +1,14 @@
 package com.banking.backend.controller;
 
+import com.banking.backend.model.dto.TransferRequest;
 import com.banking.backend.model.entity.Account;
 import com.banking.backend.model.entity.Transaction;
 import com.banking.backend.service.AccountService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -54,6 +57,24 @@ public class AccountController {
 
         return accountService.getTransactions(accountNumber);
     }
+
+    @PostMapping("/{fromAccount}/transfer")
+    public ResponseEntity<Map<String, String>> transfer(
+            @PathVariable Long fromAccount,
+            @RequestBody TransferRequest request) {
+
+        accountService.transferMoney(
+                fromAccount,
+                request.getToAccount(),
+                request.getAmount()
+        );
+
+        return ResponseEntity.ok(
+                Map.of("message", "Transfer successful")
+        );
+    }
+
+
 
 
 }
